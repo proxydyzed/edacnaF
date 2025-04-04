@@ -1,4 +1,6 @@
-export default Object.freeze({
+import { objectToReverseMap } from "../utils/object-to-reverse-map.js";
+
+const Members = Object.freeze({
     None:          0x00,
     Dark_Gray:     0x01,
     Gray:          0x02,
@@ -34,3 +36,10 @@ export default Object.freeze({
     Magenta:       0x20,
     Light_Magenta: 0x21,
 });
+
+const ReverseMap = objectToReverseMap(Members);
+
+export {
+  Members as default,
+  ReverseMap,
+};

@@ -68,7 +68,7 @@ export class BufferReader {
   }
 };
 
-export class BufferWriter {
+export class BufferWritter {
   #view;
   #offset = 0;
   #encoder = new TextEncoder();

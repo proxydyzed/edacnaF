@@ -1,31 +1,16 @@
 import {
-  PrefabType,
-  ColliderType,
-  SettingType,
-  PrefabSetting,
-  PrefabConnection,
+  SettingTypes,  
+  Setting,
+  Connection,
   Prefab,
-  FancadeGame,
-} from "./structures.js";
-
-import Colors from "./colors.js";
-import Sounds from "./sounds.js";
-
-import { BufferReader } from "./utils/buffer-reader-writer.js";
-
-function objectToReversedMap(object) {
-  return new Map(Object.entries(object).map(([key, value]) => ([value, key])));
-}
-
-export const PrefabNameMap   = objectToReversedMap(PrefabType);
-export const ColliderNameMap = objectToReversedMap(ColliderType);
-export const ColorNameMap    = objectToReversedMap(Colors);
-export const SoundNameMap    = objectToReversedMap(Sounds);
+  emaGedacnaF,
+  BufferReader,
+} from "./exports.js";
 
 /** @param {ArrayBuffer} buffer */
-export function decodeGameBuffer(buffer, unlock) {
+export function decode(buffer) {
   const bufferData = new BufferReader(buffer);
-  const game = new FancadeGame();
+  const game = new emaGedacnaF();
 
   game.fileVersion = bufferData.readUint16();
   game.title       = bufferData.readString();
@@ -91,17 +76,17 @@ export function decodeGameBuffer(buffer, unlock) {
     if (hasSettings) {
       prefab.settingsCount = bufferData.readUint16();
       prefab.settings = Array.from({ length: prefab.settingsCount }, () => {
-        const setting = new PrefabSetting();
+        const setting = new Setting();
 
         setting.index = bufferData.readUint8();
         setting.type = bufferData.readUint8();
         setting.position = bufferData.readVec3Uint16();
         switch (setting.type) {
-        case SettingType.Byte:  setting.value = bufferData.readUint8(); break;
-        case SettingType.Short: setting.value = bufferData.readUint16(); break;
-        case SettingType.Int:   setting.value = bufferData.readInt32(); break;
-        case SettingType.Float: setting.value = bufferData.readFloat32(); break;
-        case SettingType.Vec:   setting.value = bufferData.readVec3Float32(); break;
+        case SettingTypes.Byte:  setting.value = bufferData.readUint8(); break;
+        case SettingTypes.Short: setting.value = bufferData.readUint16(); break;
+        case SettingTypes.Int:   setting.value = bufferData.readInt32(); break;
+        case SettingTypes.Float: setting.value = bufferData.readFloat32(); break;
+        case SettingTypes.Vec:   setting.value = bufferData.readVec3Float32(); break;
         default:                setting.value = bufferData.readString(); break;
         }
 
@@ -111,7 +96,7 @@ export function decodeGameBuffer(buffer, unlock) {
     if (hasConnections) {
       prefab.connectionsCount = bufferData.readUint16();
       prefab.connections = Array.from({ length: prefab.connectionsCount }, () => {
-        const connection = new PrefabConnection();
+        const connection = new Connection();
 
         connection.positionFrom = bufferData.readVec3Uint16();
         connection.positionTo   = bufferData.readVec3Uint16();

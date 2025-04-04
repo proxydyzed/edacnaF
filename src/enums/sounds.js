@@ -1,4 +1,6 @@
-export default Object.freeze({
+import { objectToReverseMap } from "../utils/object-to-reverse-map.js";
+
+const Members = Object.freeze({
   Chirp   : 0,
   Scrape  : 1,
   Squeek  : 2,
@@ -17,3 +19,10 @@ export default Object.freeze({
   Clang   : 15,
   Jump    : 16,
 });
+
+const ReverseMap = objectToReverseMap(Members);
+
+export {
+  Members as default,
+  ReverseMap,
+};

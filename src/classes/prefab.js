@@ -1,52 +1,5 @@
-export const PrefabType = Object.freeze({
-  Normal:  0,
-  Physics: 1,
-  Script:  2,
-  Level:   3,
-});
-
-export const ColliderType = Object.freeze({
-  None:    0,
-  Box:     1,
-  Sphere:  2,
-  Surface: 3,
-  Exact:   4,
-});
-
-export const SettingType = Object.freeze({
-  Byte:   0x01,
-  Short:  0x02,
-  Int:    0x03,
-  Float:  0x04,
-  Vec:    0x05,
-  Str:    0x06,
-
-  ExePin: 0x07,
-  NumPin: 0x08,
-  This:   0x09,
-  VecPin: 0x0a,
-  RotPin: 0x0c,
-  TruPin: 0x0e,
-  ObjPin: 0x10,
-  ConPin: 0x12,
-});
-
-export class PrefabSetting {
-  index;    // u8
-  type;     // u8
-  position; // vec3u16
-  value;    // u8 | u16 | i32 | f32 | vec3f32 | string
-}
-
-export class PrefabConnection {
-  positionFrom; // vec3u16
-  positionTo;   // vec3u16
-  offsetFrom;   // vec3u16
-  offsetTo;     // vec3u16
-}
-
-export class Prefab {
-  type = 0;         // PrefabType
+export default class Prefab {
+  type = 0;         // enum PrefabType
   name;             // string
 
   locked;           // boolean
@@ -67,10 +20,10 @@ export class Prefab {
   tiles;            // u16[insideSize.x * insideSize.y * insideSize.z]
 
   settingsCount;    // u16
-  settings;         // PrefabSetting[settingsCount]
+  settings;         // struct Setting[settingsCount]
 
   connectionsCount; // u16
-  connections;      // PrefabConnection[connections]
+  connections;      // struct Connection[connections]
 
   toJSON() {
     const {
@@ -98,7 +51,7 @@ export class Prefab {
         id: groupId,
         position: positionInGroup,
       },
-      faces: faces ? "Vec3Uint8[6]" : null,
+      faces,
       tiles: insideSize ? {
         size: insideSize,
         data: tiles, 
@@ -110,16 +63,7 @@ export class Prefab {
   }
 }
 
-export class FancadeGame {
-  fileVersion = 31;
-  title;
-  author;
-  description;
-  idOffset = 597;
-  prefabs;
-}
-
-function convertTileDataToLayers(tiles, size) {
+export function convertTileDataToLayers(tiles, size) {
   const [x, y, z] = size;
   const layers = [];
   for (let dy = 0; dy < y; dy++) {
