@@ -113,4 +113,6 @@ export function unlock(buffer) {
       reader.offset += (connectionsCount * 24);
     }
   }
+
+  return buffer;
 }
