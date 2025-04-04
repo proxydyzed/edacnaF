@@ -1,6 +1,6 @@
 # edacnaF
 
-This is a this and simple wrapper for constructing a JSON object from the binary game file from the node based 3d environment.
+This is a thin and simple wrapper for constructing a JSON object from the binary game file from the node based 3d environment.
 
 ```js
 import { decode } from "./src/decode.js";
@@ -29,4 +29,3 @@ unlock(arrayBuffer);
   - easily slice and edit layers for making sprites
   - manipulate prefab position in the "My Blocks" folder to better organize
   - create a higher level abstraction to take care of some of the boilerplate
-  
