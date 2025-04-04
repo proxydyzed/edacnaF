@@ -78,8 +78,8 @@ export function decode(buffer) {
       prefab.settings = Array.from({ length: prefab.settingsCount }, () => {
         const setting = new Setting();
 
-        setting.index = bufferData.readUint8();
-        setting.type = bufferData.readUint8();
+        setting.index    = bufferData.readUint8();
+        setting.type     = bufferData.readUint8();
         setting.position = bufferData.readVec3Uint16();
         switch (setting.type) {
         case SettingTypes.Byte:  setting.value = bufferData.readUint8(); break;
@@ -87,7 +87,7 @@ export function decode(buffer) {
         case SettingTypes.Int:   setting.value = bufferData.readInt32(); break;
         case SettingTypes.Float: setting.value = bufferData.readFloat32(); break;
         case SettingTypes.Vec:   setting.value = bufferData.readVec3Float32(); break;
-        default:                setting.value = bufferData.readString(); break;
+        default:                 setting.value = bufferData.readString(); break;
         }
 
         return setting;
@@ -100,8 +100,8 @@ export function decode(buffer) {
 
         connection.positionFrom = bufferData.readVec3Uint16();
         connection.positionTo   = bufferData.readVec3Uint16();
-        connection.offsetFrom = bufferData.readVec3Uint16();
-        connection.offsetTo   = bufferData.readVec3Uint16();
+        connection.offsetFrom   = bufferData.readVec3Uint16();
+        connection.offsetTo     = bufferData.readVec3Uint16();
 
         return connection;
       })
