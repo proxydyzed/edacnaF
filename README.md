@@ -1,6 +1,6 @@
 # edacnaF
 
-This is a thin and simple wrapper for constructing a JSON object from the binary game file from the node based 3d environment.
+This is a thin and simple wrapper for constructing a JSON object a binary game file from the node based 3d environment.
 
 ```js
 import { decode } from "./src/decode.js";
