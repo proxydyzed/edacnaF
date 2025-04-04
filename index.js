@@ -19,5 +19,3 @@ try {
 } finally {
   await file.close();
 }
-
-console.log(decode);
