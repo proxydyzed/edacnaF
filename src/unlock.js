@@ -74,7 +74,7 @@ export function unlock(buffer) {
       reader.offset++;
     }
     if (hasData2) {
-      reader.offset += 2;
+      reader.offset += 4;
     }
     if (nonDefaultBackgroundColor) {
       reader.offset++;
@@ -99,11 +99,11 @@ export function unlock(buffer) {
       for (let i = 0; i < settingsCount; i++) {
         reader.offset++; // index
         switch (reader.view.getUint8(reader.offset)) {
-        case SettingType.Byte:  reader.offset += (1 + 6 +  1); break;
-        case SettingType.Short: reader.offset += (1 + 6 +  2); break;
-        case SettingType.Int:   reader.offset += (1 + 6 +  4); break;
-        case SettingType.Float: reader.offset += (1 + 6 +  4); break;
-        case SettingType.Vec:   reader.offset += (1 + 6 + 12); break;
+        case SettingTypes.Byte:  reader.offset += (1 + 6 +  1); break;
+        case SettingTypes.Short: reader.offset += (1 + 6 +  2); break;
+        case SettingTypes.Int:   reader.offset += (1 + 6 +  4); break;
+        case SettingTypes.Float: reader.offset += (1 + 6 +  4); break;
+        case SettingTypes.Vec:   reader.offset += (1 + 6 + 12); break;
         default:                reader.offset += (1 + 6 +  0); reader.string(); break;
         }
       }

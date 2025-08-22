@@ -205,11 +205,12 @@ export const Builtins = {
   "Slider Script":       { size: [1, 1, 1], index: 544 },
 };
 
-export default {
+export const Blocks = Object.freeze({
+  __proto__: null,
   Empty,
   Folder,
   Stocks,
   Scripts,
   Partials,
   Builtins,
-};
+});

@@ -1,4 +1,4 @@
-export default class Setting {
+export class Setting {
   index;    // u8
   type;     // u8
   position; // vec3u16

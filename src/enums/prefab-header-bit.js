@@ -1,0 +1,15 @@
+export const PrefabHeaderBits = Object.freeze({
+  hasConnections : 0,
+  hasSettings    : 1,
+  hasBlocks      : 2,
+  hasVoxels      : 3,
+  inGroup        : 4,
+  hasCollider    : 5,
+  uneditable1    : 6,
+  uneditable2    : 7,
+  hasBackground  : 8,
+  hasData2       : 9,
+  hasData1       : 10,
+  hasName        : 11,
+  hasType        : 12,
+});

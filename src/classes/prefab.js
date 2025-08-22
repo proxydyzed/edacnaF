@@ -1,4 +1,4 @@
-export default class Prefab {
+export class Prefab {
   type = 0;         // enum PrefabType
   name;             // string
 
@@ -51,7 +51,7 @@ export default class Prefab {
         id: groupId,
         position: positionInGroup,
       },
-      faces,
+      // faces,
       tiles: insideSize ? {
         size: insideSize,
         data: tiles, 

@@ -1,6 +1,6 @@
 import { objectToReverseMap } from "../utils/object-to-reverse-map.js";
 
-const Members = Object.freeze({
+export const ColliderTypes = Object.freeze({
   None:    0,
   Box:     1,
   Sphere:  2,
@@ -8,9 +8,4 @@ const Members = Object.freeze({
   Exact:   4,
 });
 
-const ReverseMap = objectToReverseMap(Members);
-
-export {
-  Members as default,
-  ReverseMap,
-};
+export const ColliderNames = objectToReverseMap(ColliderTypes);

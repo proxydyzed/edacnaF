@@ -1,0 +1,15 @@
+{
+  "name": "v2",
+  "version": "1.0.0",
+  "description": "fancade game editor",
+  "keywords": [
+    "fancade"
+  ],
+  "license": "ISC",
+  "author": "SlamJam",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js"
+  }
+}

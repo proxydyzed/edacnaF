@@ -1,4 +1,4 @@
-export default class emaGedacnaF {
+export class emaGedacnaF {
   fileVersion = 31;
   title;
   author;

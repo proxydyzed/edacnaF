@@ -1,21 +1,25 @@
 import { join } from "node:path";
-import { open } from "node:fs/promises";
+import { readFile } from "node:fs/promises";
 import { decode } from "./src/decode.js";
 
 const pathname = join(import.meta.dirname, "games", "example-game");
-const file = await open(pathname, "r");
 
 try {
-  const decompressionStream = new Blob([await file.readFile()]).stream().pipeThrough(new DecompressionStream("deflate"));
+  const decompressionStream = new Blob([await readFile(pathname)]).stream().pipeThrough(new DecompressionStream("deflate"));
   const buffer = await (new Response(decompressionStream)).arrayBuffer();
+
+  console.time();
   const game = decode(buffer);
+  console.timeEnd();
 
-  console.log("Name:", game.title);
-  console.log("Author:", game.author);
-  console.log("Description:", game.description);
-  console.log("Block limit:", game.prefabs.length / 256);
+  // console.log(game);
 
-  // console.log(JSON.stringify(decode(buffer), null, 2));
-} finally {
-  await file.close();
+  console.log({
+    title: game.title,
+    author: game.author,
+    description: game.description,
+    "block limit": `${Math.floor(game.prefabs.length * 100 / 256)}%`,
+  });
+} catch (error) {
+  console.error(error);
 }
