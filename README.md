@@ -7,7 +7,7 @@ This is a thin wrapper for constructing a JSON object given a binary game file f
 ### Unwrapping a game
 
 ```js
-import { decode } from "./src/decode.js";
+import { decode } from "./src/exports.js";
 
 const arrayBuffer = getTheFileBufferSomehow();
 const game = decode(arrayBuffer);
@@ -22,7 +22,7 @@ console.log(game.description);
 ```js
 import { writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import { Game, Prefab, encode } from "./src/encode.js";
+import { Game, Prefab, encode } from "./src/exports.js";
 
 const game       = new Game();
 game.title       = "Game title";
@@ -46,7 +46,7 @@ await writeFile(join(import.meta.dirname, "game.zlib"), new Uint8Array(buffer), 
 You can also unlock any uneditable levels or script blocks
 
 ```js
-import { unlock } from "./src/unlock.js";
+import { unlock } from "./src/exports.js";
 
 const arrayBuffer = getTheFileBufferSomehow();
 // this modifies the arrayBuffer in place
