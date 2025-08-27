@@ -1,14 +1,47 @@
-export * from "./classes/connection.js";
-export * from "./classes/prefab.js";
-export * from "./classes/setting.js";
-export * from "./classes/fancade-game.js";
+export { decode } from "./decode.js";
 
-export * from "./enums/blocks.js";
-export * from "./enums/colliders.js";
-export * from "./enums/colors.js";
-export * from "./enums/prefabs.js";
-export * from "./enums/settings.js";
-export * from "./enums/sounds.js";
-export * from "./enums/prefab-header-bit.js";
+export { encode } from "./encode.js";
 
-export * from "./utils/buffer-reader-writter.js";
+export { littleEndian } from "./dst/little-endian.js";
+
+export {
+  Sound,
+  SoundNames,
+} from "./dst/sound.js";
+
+export {
+  Empty,
+  Folder,
+  Stock,
+  Script,
+  Partial,
+  Builtin,
+  Block,
+} from "./dst/block.js";
+
+export {
+  Game,
+  Connection,
+  Setting,
+  Prefab,
+  Vector3Uint8,
+  Vector3Uint16,
+  Vector3Float,
+} from "./dst/types.js";
+
+export {
+  assertPrefabFacesLength,
+  assertPrefabTilesSize,
+  prefabHasGroup,
+  prefabHasFaces,
+  prefabHasTiles,
+  prefabHasSettings,
+  prefabHasConnections,
+  isVector3,
+  assertVector,
+} from "./dst/assertions.js";
+
+export {
+  BufferReader,
+  BufferWriter,
+} from "./dst/buffer-reader-writer.js";

@@ -1,6 +1,6 @@
-import { objectToReverseMap } from "../utils/object-to-reverse-map.js";
+import { objectToReverseMap } from "./object-to-reverse-map.js";
 
-export const Sounds = Object.freeze({
+export const Sound = Object.freeze({
   Chirp   : 0,
   Scrape  : 1,
   Squeek  : 2,
@@ -20,4 +20,4 @@ export const Sounds = Object.freeze({
   Jump    : 16,
 });
 
-export const SoundNames = objectToReverseMap(Sounds);
+export const SoundNames = objectToReverseMap(Sound);

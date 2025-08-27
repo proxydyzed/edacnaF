@@ -6,7 +6,7 @@ export const Folder = {
   "Folder Locked":       { size: [1, 1, 1], index: 416 },
 };
 
-export const Stocks = {
+export const Stock = {
   "Stone Block":         { size: [1, 1, 1], index: 1 },
   "Bricks":              { size: [1, 1, 1], index: 2 },
   "Grass":               { size: [1, 1, 1], index: 3, variations: 2 },
@@ -47,7 +47,7 @@ export const Stocks = {
   "Particle":            { size: [1, 1, 1], index: 555 },
 };
 
-export const Scripts = {
+export const Script = {
   "Comment":             { size: [1, 1, 1], index: 15 },
   "Inspect Number":      { size: [2, 1, 2], index: 16 },
   "Inspect Vector":      { size: [2, 1, 2], index: 20 },
@@ -178,7 +178,7 @@ export const Scripts = {
   "Joystick":            { size: [2, 1, 2], index: 592 },
 };
 
-export const Partials = {
+export const Partial = {
   "L2R":                 { size: [1, 1, 1], index: 9 },
   "Multi In":            { size: [1, 1, 1], index: 10 },
   "Multi Out":           { size: [1, 1, 1], index: 11 },
@@ -188,7 +188,7 @@ export const Partials = {
   "IO":                  { size: [1, 1, 1], index: 596 },
 };
 
-export const Builtins = {
+export const Builtin = {
   "Swipe Chick":         { size: [1, 1, 1], index: 383 },
   "Goal":                { size: [1, 1, 1], index: 389 },
   "Button":              { size: [1, 1, 1], index: 390 },
@@ -205,12 +205,12 @@ export const Builtins = {
   "Slider Script":       { size: [1, 1, 1], index: 544 },
 };
 
-export const Blocks = Object.freeze({
+export const Block = Object.freeze({
   __proto__: null,
   Empty,
   Folder,
-  Stocks,
-  Scripts,
-  Partials,
-  Builtins,
+  Stock,
+  Script,
+  Partial,
+  Builtin,
 });

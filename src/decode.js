@@ -1,185 +1,118 @@
+import { BufferReader } from "./dst/buffer-reader-writer.js";
+import { littleEndian } from "./dst/little-endian.js";
 import {
-  SettingTypes,  
-  Setting,
-  Connection,
+  Game,
   Prefab,
-  emaGedacnaF,
-  BufferReader,
-} from "./exports.js";
+  Setting,
+  Connection
+} from "./dst/types.js";
 
-// intentionally importing separately
-import { littleEndian } from "./utils/little-endian.js";
+const voxelArrayLength = Prefab.Faces.voxelArrayLength;
 
-/** @define {DONT_USE_FOR_LOOP} */
-
-/** @param {ArrayBuffer} buffer */
 export function decode(buffer) {
-  const bufferData = new BufferReader(buffer);
-  const game = new emaGedacnaF();
+  const reader = new BufferReader(buffer);
+  const game = new Game();
 
-  game.fileVersion = bufferData.readUint16();
-  game.title       = bufferData.readString();
-  game.author      = bufferData.readString();
-  game.description = bufferData.readString();
-  game.idOffset    = bufferData.readUint16();
+  game.fileVersion = reader.readUint16();
+  game.title       = reader.readString();
+  game.author      = reader.readString();
+  game.description = reader.readString();
+  game.indexOffset = reader.readUint16();
 
-  const prefabLength = bufferData.readUint16();
-  const prefabs = game.prefabs = new Array(prefabLength);
-  for (let i = 0; i < prefabLength; i++) {
-    const headerField = bufferData.readUint16();
-    
-    const hasConnections            = (headerField >>  0) & 1;
-    const hasSettings               = (headerField >>  1) & 1;
-    const hasBlocks                 = (headerField >>  2) & 1;
-    const hasVoxels                 = (headerField >>  3) & 1;
-    const isInGroup                 = (headerField >>  4) & 1;
-    const notBoxCollider            = (headerField >>  5) & 1;
-    const unEditable                = (headerField >>  6) & 1;
-    const unEditable2               = (headerField >>  7) & 1;
-    const nonDefaultBackgroundColor = (headerField >>  8) & 1;
-    const hasData2                  = (headerField >>  9) & 1;
-    const hasData1                  = (headerField >> 10) & 1;
-    const nonDefaultName            = (headerField >> 11) & 1;
-    const notNormalType             = (headerField >> 12) & 1;
+  const prefabLength = reader.readUint16();
+  for (let prefabCount = 0; prefabCount < prefabLength; prefabCount++) {
+    const prefab  = new Prefab();
+    prefab.header = reader.readUint16();
 
-    const prefab = new Prefab();
-    prefab.locked = Boolean(unEditable || unEditable2);
-
-    if (notNormalType) {
-      prefab.type = bufferData.readUint8();
+    const header  = new Prefab.Header(prefab.header);
+    if (header.hasType()) {
+      prefab.type = reader.readUint8();
     }
-    if (nonDefaultName) {
-      prefab.name = bufferData.readString();
+    if (header.hasName()) {
+      prefab.name = reader.readString();
     }
-    if (hasData1) {
-      prefab.data1 = bufferData.readUint8();
+    if (header.hasData1()) {
+      prefab.data1 = reader.readUint8();
     }
-    if (hasData2) {
-      prefab.data2 = bufferData.readUint32();
+    if (header.hasData2()) {
+      prefab.data2 = reader.readUint32();
     }
-    if (nonDefaultBackgroundColor) {
-      prefab.backgroundColor = bufferData.readUint8();
+    if (header.hasBackground()) {
+      prefab.backgroundColor = reader.readUint8();
     }
-    if (notBoxCollider) {
-      prefab.collider = bufferData.readUint8();
+    if (header.hasCollider()) {
+      prefab.collider = reader.readUint8();
     }
-    if (isInGroup) {
-      prefab.groupId = bufferData.readUint16();
-      prefab.positionInGroup = bufferData.readVec3Uint8();
+    if (header.inGroup()) {
+      prefab.group = new Prefab.Group();
+      prefab.group.index    = reader.readUint16();
+      prefab.group.position = reader.readVec3Uint8();
     }
-    if (hasVoxels) {
-      // any of these two works
-      // change this by commenting one of the lines
-
-      // the magic number is basically 6 sides and 8 voxels in each axis
-      // 6 * 8 * 8 * 8 = 3072
-
-      // use data view
-      prefab.faces = new DataView(bufferData.sliceBuffer(3072));
-
-      // use plain uint8 array
-      // prefab.faces = Array.from(bufferData.sliceBuffer(3072));
+    if (header.hasVoxels()) {
+      prefab.faces = new Prefab.Faces();
+      prefab.faces.positiveX = Array.from(reader.readBuffer(voxelArrayLength));
+      prefab.faces.negativeX = Array.from(reader.readBuffer(voxelArrayLength));
+      prefab.faces.positiveY = Array.from(reader.readBuffer(voxelArrayLength));
+      prefab.faces.negativeY = Array.from(reader.readBuffer(voxelArrayLength));
+      prefab.faces.positiveZ = Array.from(reader.readBuffer(voxelArrayLength));
+      prefab.faces.negativeZ = Array.from(reader.readBuffer(voxelArrayLength));
     }
-    if (hasBlocks) {
-      const [x, y, z] = prefab.insideSize = bufferData.readVec3Uint16();
+    if (header.hasBlocks()) {
+      prefab.tiles = new Prefab.Tiles();
+      const { x, y, z } = prefab.tiles.size = reader.readVec3Uint16();
+      const slice = reader.readBuffer(x * y * z * 2);
+      if (littleEndian) {
+        prefab.tiles.blocks = Array.from(new Uint16Array(slice));
+      } else {
+        // reverses the arrayBuffer in-place
+        new Uint8Array(slice).reverse();
+        prefab.tiles.blocks = Array.from(new Uint16Array(slice).reverse());
+      }
 
-      const bufferSlice = bufferData.sliceBuffer(x * y * z * 2);
-
-      // platform endianness independant:
-      prefab.tiles = new DataView(bufferSlice);
-
-      // platform endianness dependant:
-      // if (littleEndian) {
-      //   prefab.tiles = Array.from(new Uint16Array(bufferSlice));
-      // } else {
-      //   new Uint8Array(bufferSlice).reverse();
-      //   prefab.tiles = Array.from(new Uint16Array(bufferSlice)).reverse();
-      // }
-
-      // old method of doing this:
-      // prefab.tiles = Array.from({ length: x * y * z }, () => {
-      //   return bufferData.readUint16();
-      // });
+      // alternative method, auto detects endianness
+      // prefab.tiles.blocks = Array.from({ length: x * y * z }, () => reader.readUint16());
     }
-    if (hasSettings) {
-      const settingsCount = prefab.settingsCount = bufferData.readUint16();
+    if (header.hasSettings()) {
+      const settingLength = reader.readUint16();
+      prefab.settings = [];
 
-      /** @ifndef {USE_FOR_LOOP} */
-      prefab.settings = Array.from({ length: prefab.settingsCount }, () => {
-      /** @endif */
-
-      /** @ifdef {USE_FOR_LOOP} */
-      // const settings = prefab.settings = new Array(settingsCount);
-      // for (let i = 0; i < settingsCount; i++) {
-      /** @endif */
-
+      for (let settingCount = 0; settingCount < settingLength; settingCount++) {
         const setting = new Setting();
 
-        setting.index    = bufferData.readUint8();
-        setting.type     = bufferData.readUint8();
-        setting.position = bufferData.readVec3Uint16();
+        setting.index    = reader.readUint8();
+        setting.type     = reader.readUint8();
+        setting.position = reader.readVec3Uint16();
+
         switch (setting.type) {
-        case SettingTypes.Byte:  setting.value = bufferData.readUint8();       break;
-        case SettingTypes.Short: setting.value = bufferData.readUint16();      break;
-        case SettingTypes.Int:   setting.value = bufferData.readInt32();       break;
-        case SettingTypes.Float: setting.value = bufferData.readFloat32();     break;
-        case SettingTypes.Vec:   setting.value = bufferData.readVec3Float32(); break;
-        default:                 setting.value = bufferData.readString();      break;
+          case Setting.Types.Byte  : setting.value = reader.readUint8();       break;
+          case Setting.Types.Short : setting.value = reader.readUint16();      break;
+          case Setting.Types.Int   : setting.value = reader.readInt32();       break;
+          case Setting.Types.Float : setting.value = reader.readFloat32();     break;
+          case Setting.Types.Vec   : setting.value = reader.readVec3Float32(); break;
+          default                  : setting.value = reader.readString();      break;
         }
 
-      /** @ifdef {USE_FOR_LOOP} */
-      //   settings[i] = setting;
-      // }
-      /** @endif */
-
-
-      /** @ifndef {USE_FOR_LOOP} */
-        return setting;
-      });
-      /** @endif */
-
-
+        prefab.settings.push(setting);
+      }
     }
-    if (hasConnections) {
-      const connectionsCount = prefab.connectionsCount = bufferData.readUint16();
+    if (header.hasConnections()) {
+      const connectionLength = reader.readUint16();
+      prefab.connections = [];
 
-      /** @ifndef {USE_FOR_LOOP} */
-      prefab.connections = Array.from({ length: connectionsCount }, () => {
-      /** @endif */
-
-      /** @ifdef {USE_FOR_LOOP} */
-      // const connections = prefab.connections = new Array(connectionsCount);
-      // for (let i = 0; i < connectionsCount; i++) {
-      /** @endif */
-
+      for (let connectionCount = 0; connectionCount < connectionLength; connectionCount++) {
         const connection = new Connection();
 
-        connection.positionFrom = bufferData.readVec3Uint16();
-        connection.positionTo   = bufferData.readVec3Uint16();
-        connection.offsetFrom   = bufferData.readVec3Uint16();
-        connection.offsetTo     = bufferData.readVec3Uint16();
+        connection.position.from = reader.readVec3Uint16();
+        connection.position.to   = reader.readVec3Uint16();
+        connection.offset.from   = reader.readVec3Uint16();
+        connection.offset.to     = reader.readVec3Uint16();
 
-      /** @ifndef {USE_FOR_LOOP} */
-        return connection;
-      });
-      /** @endif */
-
-      /** @ifdef {USE_FOR_LOOP} */
-      //   connections[i] = connections;
-      // }
-      /** @endif */
-
+        prefab.connections.push(connection);
+      }
     }
 
-    prefabs[i] = prefab;
+    game.prefabs.push(prefab);
   }
-
-  /* for inspection purposes */
-  // console.log(bufferData.offset === buffer.byteLength);
-  // console.log({ offset: bufferData.offset, length: buffer.byteLength });
-  // console.log({
-  //   buffer: new Uint8Array(buffer.slice(bufferData.offset)),
-  // });
 
   return game;
 }
