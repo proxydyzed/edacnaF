@@ -1,12 +1,12 @@
 {
-  "name": "v2",
-  "version": "1.0.0",
-  "description": "fancade game editor",
+  "name": "edacnaf",
+  "version": "0.3.1",
+  "description": "Wrapper for encoding/decoding FC binary formay.",
   "keywords": [
     "fancade"
   ],
   "license": "ISC",
-  "author": "SlamJam",
+  "author": "PRoxydized",
   "type": "module",
   "main": "index.js",
   "scripts": {

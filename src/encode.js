@@ -93,7 +93,7 @@ export function encode(game) {
       writer.writeUint16(prefab.settings.length);
       for (const setting of prefab.settings) {
         writer.writeUint8(setting.index);
-        writer.writeUint8(seeting.type);
+        writer.writeUint8(setting.type);
         writer.writeVec3Uint16(setting.position);
 
         const value = setting.value;
