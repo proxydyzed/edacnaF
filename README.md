@@ -22,17 +22,19 @@ console.log(game.description);
 ```js
 import { writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import { Game, encode } from "./src/encode.js";
+import { Game, Prefab, encode } from "./src/encode.js";
 
-const game = new Game();
+const game       = new Game();
 game.title       = "Game title";
 game.author      = "Game author";
 game.description = "Game description";
 
-const level = game.addLevel("Game level");
-level.backgroundColor = Colors.DarkGrey;
+const level           = new Prefab();
+level.type            = Prefab.Types.Level;
+level.name            = "Game level";
+level.backgroundColor = Prefab.Color.DarkGrey;
 
-const stream = blob.stream().pipeThrough(new CompressionStream("deflate"));
+const stream = new Blob([encode(game)]).stream().pipeThrough(new CompressionStream("deflate"));
 const buffer = await (new Response(stream)).arrayBuffer();
 
 // drag and drop this in the fancade editor (in web)
@@ -52,10 +54,10 @@ unlock(arrayBuffer);
 ```
 
 ## TODO
-- Implement a compiler
-  - parse and construct a compressed buffer from text representation
-- Implement a game encoder (done)
-- Implement as editor
-  - easily slice and edit layers for making sprites
-  - manipulate prefab position in the "My Blocks" folder to better organize
-  - create a higher level abstraction to take care of some of the boilerplate
+- [ ] Implement a compiler.
+  - Parse and construct a compressed buffer from text representation.
+- [x] Implement a game encoder.
+- [ ] Implement an editor.
+  - Easily slice and edit layers for making sprites.
+  - Manipulate prefab position in the "My Blocks" folder to better organize.
+  - Create a higher level abstraction to take care of some of the boilerplate.
