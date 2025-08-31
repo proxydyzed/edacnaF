@@ -11,17 +11,10 @@ import {
   Vector3Float,
 } from "../src/exports.js";
 
-const game       = new Game();
-game.title       = "Hallo World";
-game.author      = "Hallo World";
-game.description = "Hallo World";
+const game  = new Game.Default("A New Game", "Author Name", "Description.");
+const level = Prefab.Default.level("Level one", Prefab.Color.Green);
+const tiles = new Prefab.Tiles();
 
-const level           = new Prefab();
-level.type            = Prefab.Types.Level;
-level.name            = "Hallo World";
-level.backgroundColor = Prefab.Color.Green;
-
-const tiles  = new Prefab.Tiles();
 tiles.size   = new Vector3Uint16(1, 1, 1);
 tiles.blocks = [
   Block.Script.Comment.index,

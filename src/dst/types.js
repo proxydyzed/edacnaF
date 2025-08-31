@@ -15,6 +15,29 @@ export class Game {
   description =  ""; // string
   indexOffset = 597; // u16
   prefabs     =  []; // class Prefab[]
+
+  static Default = class DefaultGame extends Game {
+    constructor(title = "New Game", author = "Unknown Author", description = "A fancade game.", indexOffset = 597) {
+      if (typeof title !== "string") {
+        throw new TypeError(`Expected title to be a string, but got ${typeof title}`);
+      }
+      if (typeof author !== "string") {
+        throw new TypeError(`Expected author to be a string, but got ${typeof author}`);
+      }
+      if (typeof description !== "string") {
+        throw new TypeError(`Expected description to be a string, but got ${typeof description}`);
+      }
+      if (typeof indexOffset !== "number") {
+        throw new TypeError(`Expected indexOffset to be a string, but got ${typeof indexOffset}`);
+      }
+
+      super();
+      this.title = title;
+      this.author = author;
+      this.description = description;
+      this.indexOffset = indexOffset;
+    }
+  };
 }
 
 export class Connection {
@@ -244,7 +267,7 @@ export class Prefab {
       this.name = name;
     }
 
-    static Level(name, color = null) {
+    static level(name, color = null) {
       const prefab = new this(Prefab.Types.Level, name);
       if (typeof color === "number") {
         prefab.backgroundColor = color;
@@ -253,15 +276,15 @@ export class Prefab {
       return prefab;
     }
 
-    static Script(name) {
+    static script(name) {
       return new this(Prefab.Types.Script, name);
     }
 
-    static Normal(name) {
+    static normal(name) {
       return new this(Prefab.Types.Normal, name);
     }
 
-    static Physics(name) {
+    static physics(name) {
       return new this(Prefab.Types.Physics, name);
     }
   };
