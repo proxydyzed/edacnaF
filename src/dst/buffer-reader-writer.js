@@ -9,10 +9,12 @@ export class BufferReader {
   view;
   offset  = 0;
   decoder = new TextDecoder();
-  buffer;
+
+  get buffer() {
+    throw new Error(`Depracated field`);
+  }
 
   constructor(buffer) {
-    this.buffer = buffer;
     this.view = new DataView(buffer);
   }
 
@@ -77,10 +79,11 @@ export class BufferWriter {
   offset = 0;
   encoder = new TextEncoder();
 
-  buffer;
+  get buffer() {
+    throw new Error(`Depracated field`);
+  }
   
   constructor(buffer) {
-    this.buffer = buffer;
     this.view = new DataView(buffer);
   }
 
@@ -115,9 +118,8 @@ export class BufferWriter {
 
   writeString(value, littleEndian = true) {
     this.writeUint8(value.length);
-    this.encoder.encode(value);
-
-    const { read, written } = this.encoder.encodeInto(value, new Uint8Array(this.buffer, this.offset));
+    // this.encoder.encode(value);
+    const { read, written } = this.encoder.encodeInto(value, new Uint8Array(this.view.buffer, this.offset));
     this.offset += written;
     return value.length - read;
   }

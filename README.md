@@ -43,13 +43,13 @@ await writeFile(join(import.meta.dirname, "game.zlib"), new Uint8Array(buffer), 
 
 ### Unlocking a game
 
-You can also unlock any uneditable levels or script blocks
+You can also unlock any uneditable levels/blocks.
 
 ```js
 import { unlock } from "./src/exports.js";
 
 const arrayBuffer = getTheFileBufferSomehow();
-// this modifies the arrayBuffer in place
+// Modifies the arrayBuffer in place
 unlock(arrayBuffer);
 ```
 

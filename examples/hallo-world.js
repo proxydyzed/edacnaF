@@ -40,3 +40,4 @@ game.prefabs.push(level);
 const gameBuffer       = encode(game);
 const compressedBuffer = await (new Response(new Blob([gameBuffer]).stream().pipeThrough(new CompressionStream("deflate")))).arrayBuffer();
 await writeFile(join(import.meta.dirname, "../games", "hallo-world"), new Uint8Array(compressedBuffer));
+console.log("Done");

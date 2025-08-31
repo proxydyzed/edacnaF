@@ -11,7 +11,7 @@ const voxelArrayLength = Prefab.Faces.voxelArrayLength;
 
 export function decode(buffer) {
   const reader = new BufferReader(buffer);
-  const game = new Game();
+  const game   = new Game();
 
   game.fileVersion = reader.readUint16();
   game.title       = reader.readString();
@@ -20,7 +20,12 @@ export function decode(buffer) {
   game.indexOffset = reader.readUint16();
 
   const prefabLength = reader.readUint16();
-  for (let prefabCount = 0; prefabCount < prefabLength; prefabCount++) {
+
+  // The variable `perfabCount` is not used anywhere else
+  // other than the following line. In future this might
+  // be used by creating an array up-front and stoging to
+  // the vacant slots.
+  for (let prefabCount = 0 ; prefabCount < prefabLength; prefabCount++) {
     const prefab  = new Prefab();
     prefab.header = reader.readUint16();
 
@@ -31,12 +36,17 @@ export function decode(buffer) {
     if (header.hasName()) {
       prefab.name = reader.readString();
     }
+
+    // data1 and data2 are almost never used in the
+    // binary format. These probably will be used
+    // in the future but I doubt it.
     if (header.hasData1()) {
       prefab.data1 = reader.readUint8();
     }
     if (header.hasData2()) {
       prefab.data2 = reader.readUint32();
     }
+
     if (header.hasBackground()) {
       prefab.backgroundColor = reader.readUint8();
     }
@@ -45,11 +55,13 @@ export function decode(buffer) {
     }
     if (header.inGroup()) {
       prefab.group = new Prefab.Group();
+
       prefab.group.index    = reader.readUint16();
       prefab.group.position = reader.readVec3Uint8();
     }
     if (header.hasVoxels()) {
       prefab.faces = new Prefab.Faces();
+
       prefab.faces.positiveX = Array.from(reader.readBuffer(voxelArrayLength));
       prefab.faces.negativeX = Array.from(reader.readBuffer(voxelArrayLength));
       prefab.faces.positiveY = Array.from(reader.readBuffer(voxelArrayLength));
@@ -58,9 +70,9 @@ export function decode(buffer) {
       prefab.faces.negativeZ = Array.from(reader.readBuffer(voxelArrayLength));
     }
     if (header.hasBlocks()) {
-      prefab.tiles = new Prefab.Tiles();
+      prefab.tiles      = new Prefab.Tiles();
       const { x, y, z } = prefab.tiles.size = reader.readVec3Uint16();
-      const slice = reader.readBuffer(x * y * z * 2);
+      const slice       = reader.readBuffer(x * y * z * 2);
       if (littleEndian) {
         prefab.tiles.blocks = Array.from(new Uint16Array(slice));
       } else {
@@ -69,7 +81,7 @@ export function decode(buffer) {
         prefab.tiles.blocks = Array.from(new Uint16Array(slice).reverse());
       }
 
-      // alternative method, auto detects endianness
+      // alternative method, takes care of endianness internally
       // prefab.tiles.blocks = Array.from({ length: x * y * z }, () => reader.readUint16());
     }
     if (header.hasSettings()) {
@@ -97,7 +109,7 @@ export function decode(buffer) {
     }
     if (header.hasConnections()) {
       const connectionLength = reader.readUint16();
-      prefab.connections = [];
+      prefab.connections     = [];
 
       for (let connectionCount = 0; connectionCount < connectionLength; connectionCount++) {
         const connection = new Connection();
@@ -113,6 +125,8 @@ export function decode(buffer) {
 
     game.prefabs.push(prefab);
   }
+
+  // console.assert(reader.offset === reader.view.buffer.byteLength);
 
   return game;
 }

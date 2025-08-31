@@ -1,5 +1,13 @@
 import { objectToReverseMap } from "./object-to-reverse-map.js";
 
+// Most of the classes in this file only houses
+// fields and data. There are no charecter trait
+// implemented in any of them so that the code is
+// easier to argue about just by looking at the
+// function that calls these classes. The only
+// reason for using classes is because JavaScript
+// does not have `struct`s yet :/
+
 export class Game {
   fileVersion =  31; // u16
   title       =  ""; // string
@@ -65,6 +73,11 @@ export class Prefab {
   settings;        // class Setting[]
   connections;     // class Connection[]
 
+  // I lied a litle when I said there are no
+  // implementations. This is the only one
+  // and it's purely because functions are
+  // more readable than manually bit shifting
+  // everywhere.
   static Header = class Header {
     bits;
 
@@ -72,56 +85,48 @@ export class Prefab {
       this.bits = bits;
     }
 
-    hasConnections() {
-      return (this.bits >> Header.BitOffset.hasConnections) & 1;
-    }
+    // Higher level control over bit manipulation.
+    // This API is purely for convenience, it gets
+    // tiresome to shift bits around everywhere.
+    hasConnections() { return (this.bits >> Header.BitOffset.hasConnections) & 1; }
+    hasSettings() {    return (this.bits >> Header.BitOffset.hasSettings) & 1; }
+    hasBlocks() {      return (this.bits >> Header.BitOffset.hasBlocks) & 1; }
+    hasVoxels() {      return (this.bits >> Header.BitOffset.hasVoxels) & 1; }
+    inGroup() {        return (this.bits >> Header.BitOffset.inGroup) & 1; }
+    hasCollider() {    return (this.bits >> Header.BitOffset.hasCollider) & 1; }
+    uneditable1() {    return (this.bits >> Header.BitOffset.uneditable1) & 1; }
+    uneditable2() {    return (this.bits >> Header.BitOffset.uneditable2) & 1; }
+    hasBackground() {  return (this.bits >> Header.BitOffset.hasBackground) & 1; }
+    hasData2() {       return (this.bits >> Header.BitOffset.hasData2) & 1; }
+    hasData1() {       return (this.bits >> Header.BitOffset.hasData1) & 1; }
+    hasName() {        return (this.bits >> Header.BitOffset.hasName) & 1; }
+    hasType() {        return (this.bits >> Header.BitOffset.hasType) & 1; }
 
-    hasSettings() {
-      return (this.bits >> Header.BitOffset.hasSettings) & 1;
-    }
+    setConnections(value) { this.setBit(value, Header.BitOffset.hasConnections); }
+    setSettings(value) {    this.setBit(value, Header.BitOffset.hasSettings); }
+    setBlocks(value) {      this.setBit(value, Header.BitOffset.hasBlocks); }
+    setVoxels(value) {      this.setBit(value, Header.BitOffset.hasVoxels); }
+    setGroup(value) {       this.setBit(value, Header.BitOffset.inGroup); }
+    setCollider(value) {    this.setBit(value, Header.BitOffset.hasCollider); }
+    setUneditable1(value) { this.setBit(value, Header.BitOffset.uneditable1); }
+    setUneditable2(value) { this.setBit(value, Header.BitOffset.uneditable2); }
+    setBackground(value) {  this.setBit(value, Header.BitOffset.hasBackground); }
+    setData2(value) {       this.setBit(value, Header.BitOffset.hasData2); }
+    setData1(value) {       this.setBit(value, Header.BitOffset.hasData1); }
+    setName(value) {        this.setBit(value, Header.BitOffset.hasName); }
+    setType(value) {        this.setBit(value, Header.BitOffset.hasType); }
 
-    hasBlocks() {
-      return (this.bits >> Header.BitOffset.hasBlocks) & 1;
-    }
+    setBit(value, offset) {
+      // Checking for `true` because this is JS
+      // and in JS anything can be anything else
+      if (value === true) {
+        this.bits |= 1 << offset;
+      } else {
+        this.bits &= 0b1111_1111_1111_1111 ^ (1 << offset);
+      }
 
-    hasVoxels() {
-      return (this.bits >> Header.BitOffset.hasVoxels) & 1;
-    }
-
-    inGroup() {
-      return (this.bits >> Header.BitOffset.inGroup) & 1;
-    }
-
-    hasCollider() {
-      return (this.bits >> Header.BitOffset.hasCollider) & 1;
-    }
-
-    uneditable1() {
-      return (this.bits >> Header.BitOffset.uneditable1) & 1;
-    }
-
-    uneditable2() {
-      return (this.bits >> Header.BitOffset.uneditable2) & 1;
-    }
-
-    hasBackground() {
-      return (this.bits >> Header.BitOffset.hasBackground) & 1;
-    }
-
-    hasData2() {
-      return (this.bits >> Header.BitOffset.hasData2) & 1;
-    }
-
-    hasData1() {
-      return (this.bits >> Header.BitOffset.hasData1) & 1;
-    }
-
-    hasName() {
-      return (this.bits >> Header.BitOffset.hasName) & 1;
-    }
-
-    hasType() {
-      return (this.bits >> Header.BitOffset.hasType) & 1;
+      // return this so methods can be chained
+      return this;
     }
 
     static BitOffset = Object.freeze({
@@ -228,10 +233,46 @@ export class Prefab {
     size;   // = new Vector3Uint16();
     blocks; // u16[] as Array(size.x * size.y * size.z)
   };
+
+  // Okay I lied a little more when I said that
+  // the 2nd time. This one is just to avoid some
+  // boilerplate code when creating Prefabs.
+  static Default = class DefaultPrefab extends Prefab {
+    constructor(type, name) {
+      super();
+      this.type = type;
+      this.name = name;
+    }
+
+    static Level(name, color = null) {
+      const prefab = new this(Prefab.Types.Level, name);
+      if (typeof color === "number") {
+        prefab.backgroundColor = color;
+      }
+
+      return prefab;
+    }
+
+    static Script(name) {
+      return new this(Prefab.Types.Script, name);
+    }
+
+    static Normal(name) {
+      return new this(Prefab.Types.Normal, name);
+    }
+
+    static Physics(name) {
+      return new this(Prefab.Types.Physics, name);
+    }
+  };
 }
 
 // These types are the same in Javascript.
 // Seprated for clarity.
+// And no I won't make a base class and
+// then extend them 3 times. I don't want
+// to overdo the already stinky amount of
+// OOP I have in this file :\
 export class Vector3Uint8 {
   x; // i8
   y; // i8
@@ -243,6 +284,8 @@ export class Vector3Uint8 {
     this.z = z;
   }
 
+  // So that I can do this if I needed to,
+  // const [x, y, z] = new Vector3Uint8(...);
   *[Symbol.iterator]() {
     yield this.x;
     yield this.y;
