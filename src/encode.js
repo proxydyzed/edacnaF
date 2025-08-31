@@ -62,7 +62,7 @@ export function encode(game) {
       writer.writeVec3Uint8(prefab.group.position);
     }
     if (header.hasVoxels()) {
-      assertPrefabFacesLengths(prefab);
+      assertPrefabFacesLength(prefab);
       for (const face of prefab.faces.positiveX) {
         writer.writeUint8(face);
       }
