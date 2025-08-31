@@ -32,18 +32,6 @@ export {
 } from "./dst/types.js";
 
 export {
-  assertPrefabFacesLength,
-  assertPrefabTilesSize,
-  prefabHasGroup,
-  prefabHasFaces,
-  prefabHasTiles,
-  prefabHasSettings,
-  prefabHasConnections,
-  isVector3,
-  assertVector,
-} from "./dst/assertions.js";
-
-export {
   BufferReader,
   BufferWriter,
 } from "./dst/buffer-reader-writer.js";
