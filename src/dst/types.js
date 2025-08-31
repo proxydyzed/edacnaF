@@ -18,6 +18,15 @@ export class Game {
 
   static Default = class DefaultGame extends Game {
     constructor(title = "New Game", author = "Unknown Author", description = "A fancade game.", indexOffset = 597) {
+      Game.Default.assert(title, author, description, indexOffset);
+      super();
+      this.title       = title;
+      this.author      = author;
+      this.description = description;
+      this.indexOffset = indexOffset;
+    }
+
+    static assert(title, author, description, indexOffset) {
       if (typeof title !== "string") {
         throw new TypeError(`Expected title to be a string, but got ${typeof title}`);
       }
@@ -30,12 +39,6 @@ export class Game {
       if (typeof indexOffset !== "number") {
         throw new TypeError(`Expected indexOffset to be a string, but got ${typeof indexOffset}`);
       }
-
-      super();
-      this.title = title;
-      this.author = author;
-      this.description = description;
-      this.indexOffset = indexOffset;
     }
   };
 }
