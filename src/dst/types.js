@@ -238,14 +238,14 @@ export class Prefab {
   };
 
   static Faces = class Faces {
-    positiveX; // = Array(512);
-    negativeX; // = Array(512);
+    positiveX; // uint8[512]
+    negativeX; // uint8[512]
 
-    positiveY; // = Array(512);
-    negativeY; // = Array(512);
+    positiveY; // uint8[512]
+    negativeY; // uint8[512]
 
-    positiveZ; // = Array(512);
-    negativeZ; // = Array(512);
+    positiveZ; // uint8[512]
+    negativeZ; // uint8[512]
 
     static unglueBitOffset = 7;
 
@@ -253,6 +253,18 @@ export class Prefab {
     // 6 * 8 * 8 * 8 = 3072
     static size = 3072;
     static voxelArrayLength = 512;
+
+    static Default = class DefaultFaces extends Faces {
+      constructor() {
+        super();
+        this.positiveX = Array(512);
+        this.negativeX = Array(512);
+        this.positiveY = Array(512);
+        this.negativeY = Array(512);
+        this.positiveZ = Array(512);
+        this.negativeZ = Array(512);
+      }
+    };
   };
 
   static Tiles = class Tiles {
