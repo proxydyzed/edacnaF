@@ -7,7 +7,7 @@ This is a thin wrapper for constructing a JSON object given a binary game file f
 ### Unwrapping a game
 
 ```js
-import { decode } from "./src/exports.js";
+import { decode } from "./lib/export.js";
 
 const arrayBuffer = getTheFileBufferSomehow();
 const game = decode(arrayBuffer);
@@ -22,20 +22,26 @@ console.log(game.description);
 ```js
 import { writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import { Game, Prefab, encode } from "./src/exports.js";
+import { GameData, Prefab, encode, compressBuffer } from "./lib/export.js";
 
-const game       = new Game();
-game.title       = "Game title";
-game.author      = "Game author";
-game.description = "Game description";
+const game = GameData.from({
+  title: "Game title",
+  author: "Game author",
+  description: "Game description",
+  prefabs: [],
+});
 
-const level           = new Prefab();
-level.type            = Prefab.Types.Level;
-level.name            = "Game level";
-level.backgroundColor = Prefab.Color.DarkGrey;
+const level = Prefab.from({
+  type: Prefab.Type.Level,
+  name: "Game level",
+  backgroundColor: Prefab.Color.DarkGrey,
+});
 
-const stream = new Blob([encode(game)]).stream().pipeThrough(new CompressionStream("deflate"));
-const buffer = await (new Response(stream)).arrayBuffer();
+// Levels need to be before any other prefab types.
+game.prefabs.push(level);
+
+const gameBuffer = encode(game);
+const buffer = await compressBuffer(gameBuffer);
 
 // drag and drop this in the fancade editor (in web)
 await writeFile(join(import.meta.dirname, "game.zlib"), new Uint8Array(buffer), "utf-8");
@@ -46,7 +52,7 @@ await writeFile(join(import.meta.dirname, "game.zlib"), new Uint8Array(buffer), 
 You can also unlock any uneditable levels/blocks.
 
 ```js
-import { unlock } from "./src/exports.js";
+import { unlock } from "./lib/export.js";
 
 const arrayBuffer = getTheFileBufferSomehow();
 // Modifies the arrayBuffer in place
