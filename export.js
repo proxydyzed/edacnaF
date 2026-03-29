@@ -5,6 +5,7 @@ export {
   Vector3Float,
 
   Blocks,
+  BlocksList,
 
   GameData,
   Prefab,
