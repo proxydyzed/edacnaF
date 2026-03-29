@@ -21,6 +21,7 @@ export {
 
   iterAsWorld,
   SparseTiles,
+  connectionOffset,
 } from "./lib/export.js";
 
 export {
