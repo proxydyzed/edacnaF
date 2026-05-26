@@ -10,6 +10,10 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
+    "build": "rollup \"export.js\" -o \"index.min.js.txt\" -f es",
     "test": "node index.js"
+  },
+  "dependencies": {
+    "rollup": "^4.60.4"
   }
 }

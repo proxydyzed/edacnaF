@@ -2,3 +2,5 @@
 .gitignore
 .discarded
 .tests
+index.min.js.txt
+package-lock.json
